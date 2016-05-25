@@ -3,10 +3,13 @@ package foghel.ioana.com.jsonevents.utility;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -24,6 +28,7 @@ import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import foghel.ioana.com.jsonevents.activities.MainActivity;
+import foghel.ioana.com.jsonevents.service.Service;
 
 /**
  * Created by Alin on 25-May-16.
@@ -31,16 +36,31 @@ import foghel.ioana.com.jsonevents.activities.MainActivity;
 public class DownloadJsonTask extends AsyncTask<String, String, Void> {
 
     private MainActivity mainActivity;
-    private ProgressDialog progressDialog = new ProgressDialog(mainActivity);
     InputStream inputStream = null;
     String result = "";
+    private static final String TAG_EVENTS = "events";
 
-    public DownloadJsonTask(MainActivity mainActivity) {
+    private static final String EVENT_ID = "eventid";
+    private static final String SUBTITLE_ENGLISH = "subtitle_english";
+    private static final String DESCRIPTION_ENGLISH = "description_english";
+    private static final String TITLE_ENGLISH = "title_english";
+    private static final String URL = "url";
+    private static final String PICTURE_NAME = "picture_name";
+    private static final String DATE_LIST = "datelist";
+
+    Handler onFinishHandler;
+
+    ProgressDialog progressDialog;
+
+    public DownloadJsonTask(MainActivity mainActivity, Handler onFinishHandler) {
         this.mainActivity = mainActivity;
+        progressDialog = new ProgressDialog(mainActivity);
+        this.onFinishHandler = onFinishHandler;
     }
 
     @Override
     protected void onPreExecute() {
+
         progressDialog.setMessage("Downloading your data...");
         progressDialog.show();
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -106,7 +126,34 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         //parse JSON data
-        JSONArray jArray;
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+
+            JSONArray events = jsonObj.getJSONArray(TAG_EVENTS);
+            for (int i = 0; i< events.length(); i++){
+                JSONObject event = events.getJSONObject(i);
+                String eventid = event.getString(EVENT_ID);
+                String subtitle_english = event.getString(SUBTITLE_ENGLISH);
+                String description_english = event.getString(DESCRIPTION_ENGLISH);
+                String title_english = event.getString(TITLE_ENGLISH);
+                String url = event.getString(URL);
+                String picture_name= event.getString(PICTURE_NAME);
+
+                JSONArray dateList = event.getJSONArray(DATE_LIST);
+                JSONObject date =  dateList.getJSONObject(0);
+
+                long startTime = date.getLong("start");
+                long endTime = date.getLong("end");
+
+                Service.CreateEvent(eventid,subtitle_english,description_english,title_english,url,picture_name,startTime,endTime);
+            }
+
+            Log.i("Service Array Length:", Service.getEvents().size()+ "");
+            onFinishHandler.sendEmptyMessage(0);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //jsonTextView.setText(result);
         this.progressDialog.dismiss();
     } // protected void onPostExecute(Void v)
