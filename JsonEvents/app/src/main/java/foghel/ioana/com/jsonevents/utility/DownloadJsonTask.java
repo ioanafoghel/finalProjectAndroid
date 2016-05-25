@@ -1,0 +1,113 @@
+package foghel.ioana.com.jsonevents.utility;
+
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import foghel.ioana.com.jsonevents.activities.MainActivity;
+
+/**
+ * Created by Alin on 25-May-16.
+ */
+public class DownloadJsonTask extends AsyncTask<String, String, Void> {
+
+    private MainActivity mainActivity;
+    private ProgressDialog progressDialog = new ProgressDialog(mainActivity);
+    InputStream inputStream = null;
+    String result = "";
+
+    public DownloadJsonTask(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        progressDialog.setMessage("Downloading your data...");
+        progressDialog.show();
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface arg0) {
+                DownloadJsonTask.this.cancel(true);
+            }
+        });
+    }
+
+    @Override
+    protected Void doInBackground(String... params) {
+        String url_select = "http://events.makeable.dk/api/getEvents";
+
+        ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+
+        try {
+            // Set up HTTP post
+
+            // HttpClient is more then less deprecated. Need to change to URLConnection
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost httpPost = new HttpPost(url_select);
+            httpPost.setEntity(new UrlEncodedFormEntity(param));
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpEntity httpEntity = httpResponse.getEntity();
+
+            // Read content & Log
+            inputStream = httpEntity.getContent();
+        } catch (UnsupportedEncodingException e1) {
+            //Log.e("UnsupportedEncodingException", "");
+            e1.printStackTrace();
+        } catch (ClientProtocolException e2) {
+            Log.e("ClientProtocolException", e2.toString());
+            e2.printStackTrace();
+        } catch (IllegalStateException e3) {
+            Log.e("IllegalStateException", e3.toString());
+            e3.printStackTrace();
+        } catch (IOException e4) {
+            Log.e("IOException", e4.toString());
+            e4.printStackTrace();
+        }
+        // Convert response to string using String Builder
+        try {
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
+            StringBuilder sBuilder = new StringBuilder();
+
+            String line = null;
+            while ((line = bReader.readLine()) != null) {
+                sBuilder.append(line + "\n");
+            }
+
+            inputStream.close();
+            result = sBuilder.toString();
+            Toast.makeText(mainActivity.getApplicationContext(), "Got json", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            //Log.e("StringBuilding & BufferedReader", "Error converting result " + e.toString());
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        //parse JSON data
+        JSONArray jArray;
+        //jsonTextView.setText(result);
+        this.progressDialog.dismiss();
+    } // protected void onPostExecute(Void v)
+}
