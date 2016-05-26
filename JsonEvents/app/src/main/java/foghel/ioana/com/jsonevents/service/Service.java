@@ -1,5 +1,6 @@
 package foghel.ioana.com.jsonevents.service;
 
+import android.content.Context;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 
@@ -27,5 +28,17 @@ public class Service {
 
     public static void LoadJsonData(Fragment fragment, Handler dataFinishedLoadingCallback){
         Storage.getInstance().LoadJsonData(fragment,dataFinishedLoadingCallback);
+    }
+
+    public static void StoreEventinDb(Event event){
+        Storage.getInstance().StoreEventInDb(event);
+    }
+
+    public static void InitDatabase(Context context){
+        Storage.getInstance().InitDatabase(context);
+    }
+
+    public static boolean doesEventExistInCache(String eventId){
+        return Storage.getInstance().doesEventExistInCache(eventId);
     }
 }

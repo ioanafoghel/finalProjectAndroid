@@ -28,7 +28,6 @@ import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import foghel.ioana.com.jsonevents.activities.EventListFragment;
 import foghel.ioana.com.jsonevents.service.Service;
 
 /**
@@ -63,12 +62,8 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
     protected void onPreExecute() {
 
         progressDialog.setMessage("Downloading your data...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
-        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface arg0) {
-                //DownloadJsonTask.this.cancel(true);
-            }
-        });
     }
 
     @Override
@@ -128,6 +123,12 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
     protected void onPostExecute(Void aVoid) {
         //parse JSON data
         try {
+
+            if(result == null || result.isEmpty()){
+                onFinishHandler.sendEmptyMessage(1);
+                return;
+            }
+
             JSONObject jsonObj = new JSONObject(result);
 
             JSONArray events = jsonObj.getJSONArray(TAG_EVENTS);

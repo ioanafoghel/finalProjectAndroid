@@ -60,6 +60,10 @@ public class EventListFragment extends android.support.v4.app.Fragment {
                         //update the list with data here
                         setUpEventList();
                         break;
+                    case 1:
+                        //load events from the database
+                        
+                        break;
                 }
             }
         });

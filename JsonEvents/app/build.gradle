@@ -28,5 +28,6 @@ dependencies {
     // http://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
     compile group: 'cz.msebera.android' , name: 'httpclient', version: '4.4.1.1'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
 }

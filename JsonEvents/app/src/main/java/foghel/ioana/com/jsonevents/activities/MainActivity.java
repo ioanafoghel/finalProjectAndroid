@@ -1,14 +1,12 @@
 package foghel.ioana.com.jsonevents.activities;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
-
 import foghel.ioana.com.jsonevents.R;
+import foghel.ioana.com.jsonevents.service.Service;
 
 public class MainActivity extends FragmentActivity {
 
@@ -16,6 +14,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Service.InitDatabase(getApplicationContext());
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -33,7 +33,7 @@ public class MainActivity extends FragmentActivity {
             firstFragment.setOnListItemListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    OpenEventDetailsFragment();
+                    OpenEventDetailsFragment(position);
                     //Toast.makeText(getApplicationContext(), "Click " + position, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -47,11 +47,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void OpenEventDetailsFragment() {
+    private void OpenEventDetailsFragment(int position) {
+
         // Create fragment and give it an argument specifying the article it should show
         EventDetailsFragment newFragment = new EventDetailsFragment();
         Bundle args = new Bundle();
-        //args.putInt(ArticleFragment.ARG_POSITION, position);
+        args.putInt("eventIndex", position);
         newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

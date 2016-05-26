@@ -1,6 +1,7 @@
 package foghel.ioana.com.jsonevents.utility;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,14 @@ public class EventsAdaptor extends ArrayAdapter<Event> {
         TextView titleTextView = (TextView) convertView.findViewById(R.id.title_textView);
         TextView startTimeTextView = (TextView) convertView.findViewById(R.id.startTime_textView);
         TextView endTimeTextView = (TextView) convertView.findViewById(R.id.endTime_textView);
+        TextView cachedTextView = (TextView) convertView.findViewById(R.id.cached_textView);
+
+        if(Service.doesEventExistInCache(event.getEventid())){
+            cachedTextView.setText("Saved");
+            cachedTextView.setTextColor(Color.RED);
+        }else{
+            cachedTextView.setText("");
+        }
 
         titleTextView.setText( event.getTitle_english());
         startTimeTextView.setText("Start time: " + event.getStartTimeFormated() + "");
