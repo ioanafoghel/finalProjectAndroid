@@ -18,31 +18,6 @@ import foghel.ioana.com.jsonevents.service.Service;
  */
 public class EventsAdaptor extends ArrayAdapter<Event> {
 
-
-    public EventsAdaptor(Context context, int resource, int textViewResourceId, List<Event> objects) {
-        super(context, resource, textViewResourceId, objects);
-    }
-
-    public EventsAdaptor(Context context, int resource) {
-        super(context, resource);
-    }
-
-    public EventsAdaptor(Context context, int resource, int textViewResourceId) {
-        super(context, resource, textViewResourceId);
-    }
-
-    public EventsAdaptor(Context context, int resource, Event[] objects) {
-        super(context, resource, objects);
-    }
-
-    public EventsAdaptor(Context context, int resource, int textViewResourceId, Event[] objects) {
-        super(context, resource, textViewResourceId, objects);
-    }
-
-    public EventsAdaptor(Context context, int resource, List<Event> objects) {
-        super(context, resource, objects);
-    }
-
     public EventsAdaptor(Context context, List<Event> objects) {
         super(context, 0 , objects);
     }
@@ -61,9 +36,9 @@ public class EventsAdaptor extends ArrayAdapter<Event> {
         TextView startTimeTextView = (TextView) convertView.findViewById(R.id.startTime_textView);
         TextView endTimeTextView = (TextView) convertView.findViewById(R.id.endTime_textView);
 
-        titleTextView.setText(event.getTitle_english());
-        startTimeTextView.setText(event.getStartTime() + "");
-        endTimeTextView.setText(event.getEndTime() + "");
+        titleTextView.setText( event.getTitle_english());
+        startTimeTextView.setText("Start time: " + event.getStartTimeFormated() + "");
+        endTimeTextView.setText( "End  time:  " + event.getEndTimeFormated() + "");
 
         return convertView;
     }

@@ -1,5 +1,9 @@
 package foghel.ioana.com.jsonevents.model;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Alin on 25-May-16.
  */
@@ -13,6 +17,8 @@ public class Event {
     private String picture_name;
     private long startTime;
     private long endTime;
+    private String startTimeFormated;
+    private String endTimeFormated;
 
     public Event(String eventid, String subtitle_english, String description_english, String title_english, String url, String picture_name, long startTime, long endTime) {
         this.eventid = eventid;
@@ -23,6 +29,24 @@ public class Event {
         this.picture_name = picture_name;
         this.startTime = startTime;
         this.endTime = endTime;
+
+        //convert the startTime and endTime to formated date strings here
+        this.startTimeFormated = convertFromLongToDateTime(startTime);
+        this.endTimeFormated = convertFromLongToDateTime(endTime);
+    }
+
+    private String convertFromLongToDateTime(long timeMilliseconds){
+        Date date = new Date(timeMilliseconds * 1000);
+        Format format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        return format.format(date);
+    }
+
+    public String getStartTimeFormated() {
+        return startTimeFormated;
+    }
+
+    public String getEndTimeFormated() {
+        return endTimeFormated;
     }
 
     public long getStartTime() {

@@ -1,5 +1,8 @@
 package foghel.ioana.com.jsonevents.service;
 
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+
 import java.util.ArrayList;
 
 import foghel.ioana.com.jsonevents.model.Event;
@@ -11,14 +14,18 @@ import foghel.ioana.com.jsonevents.storage.Storage;
 public class Service {
 
     public static void CreateEvent(String eventid, String subtitle_english, String description_english, String title_english, String url, String picture_name, long startTime, long endTime) {
-        Storage.CreateEvent(eventid, subtitle_english, description_english, title_english, url, picture_name, startTime, endTime);
+        Storage.getInstance().CreateEvent(eventid, subtitle_english, description_english, title_english, url, picture_name, startTime, endTime);
     }
 
     public static ArrayList<Event> getEvents() {
-        return Storage.getEvents();
+        return Storage.getInstance().getEvents();
     }
 
     public static Event getEventAtIndex(int index){
-        return Storage.getEventAtIndex(index);
+        return Storage.getInstance().getEventAtIndex(index);
+    }
+
+    public static void LoadJsonData(Fragment fragment, Handler dataFinishedLoadingCallback){
+        Storage.getInstance().LoadJsonData(fragment,dataFinishedLoadingCallback);
     }
 }

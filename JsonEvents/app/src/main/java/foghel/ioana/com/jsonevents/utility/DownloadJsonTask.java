@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import foghel.ioana.com.jsonevents.activities.MainActivity;
+import foghel.ioana.com.jsonevents.activities.EventListFragment;
 import foghel.ioana.com.jsonevents.service.Service;
 
 /**
@@ -35,7 +36,7 @@ import foghel.ioana.com.jsonevents.service.Service;
  */
 public class DownloadJsonTask extends AsyncTask<String, String, Void> {
 
-    private MainActivity mainActivity;
+    private Fragment eventListFragment;
     InputStream inputStream = null;
     String result = "";
     private static final String TAG_EVENTS = "events";
@@ -52,9 +53,9 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
 
     ProgressDialog progressDialog;
 
-    public DownloadJsonTask(MainActivity mainActivity, Handler onFinishHandler) {
-        this.mainActivity = mainActivity;
-        progressDialog = new ProgressDialog(mainActivity);
+    public DownloadJsonTask(Fragment eventListFragment, Handler onFinishHandler) {
+        this.eventListFragment = eventListFragment;
+        progressDialog = new ProgressDialog(eventListFragment.getContext());
         this.onFinishHandler = onFinishHandler;
     }
 
@@ -65,7 +66,7 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
         progressDialog.show();
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             public void onCancel(DialogInterface arg0) {
-                DownloadJsonTask.this.cancel(true);
+                //DownloadJsonTask.this.cancel(true);
             }
         });
     }
@@ -114,7 +115,7 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
 
             inputStream.close();
             result = sBuilder.toString();
-            Toast.makeText(mainActivity.getApplicationContext(), "Got json", Toast.LENGTH_SHORT).show();
+            Toast.makeText(eventListFragment.getContext(), "Got json", Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
             //Log.e("StringBuilding & BufferedReader", "Error converting result " + e.toString());
@@ -145,7 +146,9 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
                 long startTime = date.getLong("start");
                 long endTime = date.getLong("end");
 
-                Service.CreateEvent(eventid,subtitle_english,description_english,title_english,url,picture_name,startTime,endTime);
+                if (!title_english.isEmpty()) {
+                    Service.CreateEvent(eventid, subtitle_english, description_english, title_english, url, picture_name, startTime, endTime);
+                }
             }
 
             Log.i("Service Array Length:", Service.getEvents().size()+ "");
