@@ -29,6 +29,7 @@ import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import foghel.ioana.com.jsonevents.service.Service;
+import foghel.ioana.com.jsonevents.storage.Storage;
 
 /**
  * Created by Alin on 25-May-16.
@@ -49,11 +50,13 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
     private static final String DATE_LIST = "datelist";
 
     Handler onFinishHandler;
+    Storage storage;
 
     ProgressDialog progressDialog;
 
-    public DownloadJsonTask(Fragment eventListFragment, Handler onFinishHandler) {
+    public DownloadJsonTask(Storage storage, Fragment eventListFragment, Handler onFinishHandler) {
         this.eventListFragment = eventListFragment;
+        this.storage = storage;
         progressDialog = new ProgressDialog(eventListFragment.getContext());
         this.onFinishHandler = onFinishHandler;
     }
@@ -124,25 +127,27 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
         //parse JSON data
         try {
 
-            if(result == null || result.isEmpty()){
+            if (result == null || result.isEmpty()) {
                 onFinishHandler.sendEmptyMessage(1);
+                storage.dataHasBeenLoaded = false;
+                this.progressDialog.dismiss();
                 return;
             }
 
             JSONObject jsonObj = new JSONObject(result);
 
             JSONArray events = jsonObj.getJSONArray(TAG_EVENTS);
-            for (int i = 0; i< events.length(); i++){
+            for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
                 String eventid = event.getString(EVENT_ID);
                 String subtitle_english = event.getString(SUBTITLE_ENGLISH);
                 String description_english = event.getString(DESCRIPTION_ENGLISH);
                 String title_english = event.getString(TITLE_ENGLISH);
                 String url = event.getString(URL);
-                String picture_name= event.getString(PICTURE_NAME);
+                String picture_name = event.getString(PICTURE_NAME);
 
                 JSONArray dateList = event.getJSONArray(DATE_LIST);
-                JSONObject date =  dateList.getJSONObject(0);
+                JSONObject date = dateList.getJSONObject(0);
 
                 long startTime = date.getLong("start");
                 long endTime = date.getLong("end");
@@ -152,8 +157,9 @@ public class DownloadJsonTask extends AsyncTask<String, String, Void> {
                 }
             }
 
-            Log.i("Service Array Length:", Service.getEvents().size()+ "");
+            Log.i("Service Array Length:", Service.getEvents().size() + "");
             onFinishHandler.sendEmptyMessage(0);
+            storage.dataHasBeenLoaded = true;
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -30,6 +30,10 @@ public class Service {
         Storage.getInstance().LoadJsonData(fragment,dataFinishedLoadingCallback);
     }
 
+    public static ArrayList<Event> getDatabaseStoredEvents(){
+        return Storage.getInstance().getDatabaseStoredEvents();
+    }
+
     public static void StoreEventinDb(Event event){
         Storage.getInstance().StoreEventInDb(event);
     }

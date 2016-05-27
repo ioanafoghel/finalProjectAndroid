@@ -43,10 +43,10 @@ public class Storage {
         return instance;
     }
 
-    private boolean dataHasBeenLoaded;
+    public boolean dataHasBeenLoaded;
 
     public ArrayList<Event> events = new ArrayList<>();
-    public ArrayList<Event> cachedEvents = new ArrayList<>();
+    public ArrayList<Event> databaseStoredEvents = new ArrayList<>();
 
     public void CreateEvent(String eventid, String subtitle_english, String description_english, String title_english, String url, String picture_name, long startTime, long endTime) {
 
@@ -56,7 +56,7 @@ public class Storage {
 
     public void StoreEventInDb(Event event) {
 
-        cachedEvents.add(event);
+        databaseStoredEvents.add(event);
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -83,8 +83,14 @@ public class Storage {
     }
 
     public Event getEventAtIndex(int index) {
+        if (dataHasBeenLoaded) {
+            return events.get(index);
+        }
+        return databaseStoredEvents.get(index);
+    }
 
-        return events.get(index);
+    public ArrayList<Event> getDatabaseStoredEvents() {
+        return new ArrayList<>(databaseStoredEvents);
     }
 
     public ArrayList<Event> getEvents() {
@@ -96,25 +102,23 @@ public class Storage {
      */
     public void LoadJsonData(Fragment fragment, Handler dataFinishedLoadingCallback) {
         if (!dataHasBeenLoaded) {
-            DownloadJsonTask asyncTask = new DownloadJsonTask(fragment, dataFinishedLoadingCallback);
+            DownloadJsonTask asyncTask = new DownloadJsonTask(this, fragment, dataFinishedLoadingCallback);
             asyncTask.execute();
-            dataHasBeenLoaded = true;
         }
     }
 
-    public boolean doesEventExistInCache(String eventId){
+    public boolean doesEventExistInCache(String eventId) {
 
-        for (int i = 0; i<cachedEvents.size();i++){
-            if(cachedEvents.get(i).getEventid().compareTo(eventId) == 0) {
+        for (int i = 0; i < databaseStoredEvents.size(); i++) {
+            if (databaseStoredEvents.get(i).getEventid().compareTo(eventId) == 0) {
                 return true;
             }
-
         }
 
         return false;
     }
 
-    public void LoadDataFromDatabase(){
+    public void LoadDataFromDatabase() {
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
@@ -152,7 +156,7 @@ public class Storage {
         String startTime;
         String endTime;
 
-        for (int i=0; i < c.getCount(); i++){
+        for (int i = 0; i < c.getCount(); i++) {
 
             c.moveToNext();
 
@@ -165,9 +169,9 @@ public class Storage {
             startTime = c.getString(c.getColumnIndexOrThrow(EventReaderContract.EventEntry.COLUMN_NAME_START_TIME));
             endTime = c.getString(c.getColumnIndexOrThrow(EventReaderContract.EventEntry.COLUMN_NAME_END_TIME));
 
-            cachedEvents.add(new Event(eventId,subtitleEnglish,descriptionEnglish,titleEnglish,url,pictureName,Long.parseLong(startTime),Long.parseLong(endTime)));
+            databaseStoredEvents.add(new Event(eventId, subtitleEnglish, descriptionEnglish, titleEnglish, url, pictureName, Long.parseLong(startTime), Long.parseLong(endTime)));
         }
 
-        Toast.makeText(context,"Count:" + cachedEvents.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Count:" + databaseStoredEvents.size(), Toast.LENGTH_SHORT).show();
     }
 }
