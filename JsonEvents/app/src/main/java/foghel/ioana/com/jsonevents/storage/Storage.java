@@ -29,9 +29,11 @@ public class Storage {
 
     public void InitDatabase(Context context) {
         this.context = context;
-        mDbHelper = new EventReaderDbHelper(context);
+        if (mDbHelper == null) {
+            mDbHelper = new EventReaderDbHelper(context);
+            LoadDataFromDatabase();
+        }
 
-        LoadDataFromDatabase();
     }
 
     public static Storage getInstance() {
@@ -101,9 +103,11 @@ public class Storage {
     Loads the json data from the provided url
      */
     public void LoadJsonData(Fragment fragment, Handler dataFinishedLoadingCallback) {
-        if (!dataHasBeenLoaded) {
+        if (!dataHasBeenLoaded && events.size() == 0) {
             DownloadJsonTask asyncTask = new DownloadJsonTask(this, fragment, dataFinishedLoadingCallback);
             asyncTask.execute();
+        }else {
+            dataFinishedLoadingCallback.sendEmptyMessage(0);
         }
     }
 
