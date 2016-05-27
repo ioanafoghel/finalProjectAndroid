@@ -15,7 +15,7 @@ import foghel.ioana.com.jsonevents.model.Event;
 import foghel.ioana.com.jsonevents.service.Service;
 
 /**
- * Created by Alin on 26-May-16.
+ * Created by Ioana on 26-May-16.
  */
 public class EventsAdaptor extends ArrayAdapter<Event> {
 

@@ -32,7 +32,7 @@ import foghel.ioana.com.jsonevents.service.Service;
 import foghel.ioana.com.jsonevents.storage.Storage;
 
 /**
- * Created by Alin on 25-May-16.
+ * Created by Ioana on 25-May-16.
  */
 public class DownloadJsonTask extends AsyncTask<String, String, Void> {
 

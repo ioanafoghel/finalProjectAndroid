@@ -3,7 +3,7 @@ package foghel.ioana.com.jsonevents.storage;
 import android.provider.BaseColumns;
 
 /**
- * Created by Alin on 26-May-16.
+ * Created by Ioana on 26-May-16.
  */
 public final class EventReaderContract {
 

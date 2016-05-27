@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Alin on 25-May-16.
+ * Created by Ioana on 25-May-16.
  */
 public class Event {
 

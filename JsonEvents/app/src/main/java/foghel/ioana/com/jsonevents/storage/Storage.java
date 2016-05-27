@@ -14,7 +14,7 @@ import foghel.ioana.com.jsonevents.model.Event;
 import foghel.ioana.com.jsonevents.utility.DownloadJsonTask;
 
 /**
- * Created by Alin on 25-May-16.
+ * Created by Ioana on 25-May-16.
  */
 public class Storage {
 

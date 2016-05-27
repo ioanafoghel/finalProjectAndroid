@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import foghel.ioana.com.jsonevents.storage.EventReaderContract.*;
 
 /**
- * Created by Alin on 27-May-16.
+ * Created by Ioana on 27-May-16.
  */
 public class EventReaderDbHelper extends SQLiteOpenHelper {
 

@@ -19,7 +19,7 @@ import foghel.ioana.com.jsonevents.service.Service;
 import foghel.ioana.com.jsonevents.utility.EventsAdaptor;
 
 /**
- * Created by Alin on 26-May-16.
+ * Created by Ioana on 26-May-16.
  */
 public class EventListFragment extends android.support.v4.app.Fragment {
 
